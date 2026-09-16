@@ -1,4 +1,4 @@
-import { STAGES } from '../data/mockShipments'
+import { STAGES } from '../api/pricing'
 
 export function getStatusMeta(currentStage) {
   if (currentStage >= 5) return { label: 'Delivered', color: 'var(--stamp-green)' }

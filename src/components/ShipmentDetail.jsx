@@ -1,16 +1,9 @@
-import { STAGES, getCategory, calcAllInCost } from '../data/mockShipments'
-
-function formatIdr(n) {
-  return n.toLocaleString('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 })
-}
+import { STAGES, categoryLabel } from '../api/pricing'
+import { formatIdr } from '../utils/format'
 
 export default function ShipmentDetail({ shipment }) {
-  const category = getCategory(shipment.mode, shipment.category)
   const isAir = shipment.mode === 'Air freight'
-  const rate = isAir ? category.ratePerKg : category.ratePerCbm
-  const quantity = isAir ? shipment.weightKg : shipment.volumeCbm
   const unit = isAir ? 'KG' : 'CBM'
-  const total = calcAllInCost(shipment)
 
   return (
     <div className="detail">
@@ -40,15 +33,21 @@ export default function ShipmentDetail({ shipment }) {
         <h3 className="ledger-title">Cost &mdash; all-in rate</h3>
         <div className="ledger-row">
           <span>Category</span>
-          <span>{category.label}</span>
+          <span>{categoryLabel(shipment.mode, shipment.category)}</span>
         </div>
         <div className="ledger-row">
-          <span>{quantity.toLocaleString('id-ID')} {unit} &times; {formatIdr(rate)}/{unit}</span>
-          <span className="mono">{formatIdr(total)}</span>
+          <span>{Number(shipment.quantity).toLocaleString('id-ID')} {unit} &times; {formatIdr(shipment.rate)}/{unit}</span>
+          <span className="mono">{formatIdr(shipment.quantity * shipment.rate)}</span>
         </div>
+        {shipment.additionalCost > 0 && (
+          <div className="ledger-row">
+            <span>Ongkos tambahan</span>
+            <span className="mono">{formatIdr(shipment.additionalCost)}</span>
+          </div>
+        )}
         <div className="ledger-row ledger-total">
           <span>Total (all-in)</span>
-          <span className="mono">{formatIdr(total)}</span>
+          <span className="mono">{formatIdr(shipment.totalCost)}</span>
         </div>
         <p className="ledger-note">All-in rate — no separate duty, VAT, or customs fees.</p>
       </div>

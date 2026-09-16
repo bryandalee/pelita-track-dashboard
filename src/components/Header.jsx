@@ -1,6 +1,9 @@
+import { Link, useLocation } from 'react-router-dom'
 import logo from '../assets/pelita-logo.png'
 
-export default function Header({ query, onQueryChange }) {
+export default function Header() {
+  const location = useLocation()
+
   return (
     <header className="header">
       <div className="header-mark">
@@ -10,15 +13,10 @@ export default function Header({ query, onQueryChange }) {
           <p className="header-sub">China–Indonesia freight, manifest view</p>
         </div>
       </div>
-      <label className="header-search">
-        <span className="sr-only">Search by waybill or client</span>
-        <input
-          type="text"
-          placeholder="Search waybill or client..."
-          value={query}
-          onChange={(e) => onQueryChange(e.target.value)}
-        />
-      </label>
+      <nav className="header-nav" aria-label="Main">
+        <Link to="/" className={location.pathname === '/' ? 'is-active' : ''}>Track</Link>
+        <Link to="/admin" className={location.pathname === '/admin' ? 'is-active' : ''}>Admin</Link>
+      </nav>
     </header>
   )
 }

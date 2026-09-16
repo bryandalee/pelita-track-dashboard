@@ -1,9 +1,6 @@
 import { useMemo, useState } from 'react'
-import { SEA_CATEGORIES, AIR_CATEGORIES } from '../data/mockShipments'
-
-function formatIdr(n) {
-  return n.toLocaleString('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 })
-}
+import { SEA_CATEGORIES, AIR_CATEGORIES } from '../api/pricing'
+import { formatIdr } from '../utils/format'
 
 export default function CostEstimator() {
   const [mode, setMode] = useState('Sea freight')
