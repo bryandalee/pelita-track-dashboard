@@ -98,6 +98,24 @@
   justify-content: flex-end;
 }
 
+.toolbar-search input {
+  background: var(--paper);
+  border: 1px solid var(--line-strong);
+  border-radius: 4px;
+  padding: 0.5rem 0.75rem;
+  color: var(--ink);
+  min-width: 240px;
+}
+
+.toolbar-search input::placeholder {
+  color: var(--ink-faint);
+}
+
+.toolbar-search input:focus-visible {
+  outline: 2px solid var(--sea);
+  outline-offset: 1px;
+}
+
 /* Main layout */
 .main {
   flex: 1;

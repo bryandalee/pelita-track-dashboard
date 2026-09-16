@@ -57,7 +57,7 @@ export default function TrackingPage() {
   return (
     <main className="main">
       <div className="toolbar">
-        <label className="header-search">
+        <label className="toolbar-search">
           <span className="sr-only">Search by waybill or client</span>
           <input
             type="text"
