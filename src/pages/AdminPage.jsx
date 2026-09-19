@@ -27,6 +27,11 @@ function LoginForm() {
           Sign in with the admin account created in Supabase. Access is enforced by
           Supabase Auth + Row Level Security, not by the app itself.
         </p>
+        <div className="demo-hint">
+          <strong>Demo credentials</strong> — feel free to sign in and try it:
+          <br />
+          <span className="mono">demo@pelitatrack.app</span> / <span className="mono">PelitaDemo2026</span>
+        </div>
         <label>
           <span>Email</span>
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoFocus required />

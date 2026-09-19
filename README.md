@@ -42,7 +42,7 @@ Two tables (see `supabase_schema.sql`):
 
 `/admin` is protected by real **Supabase Auth** — signing in requires the email/password of an account created directly in the Supabase dashboard. Write access to the database is enforced by Row Level Security policies that check for a logged-in (`authenticated`) session, at the database level — not by anything in the React code. This means the protection holds even if someone bypasses the UI and calls the API directly.
 
-**Try it:** `/admin` — login with `demo@pelitatrack.app` / `PelitaDemo2026`. All data behind this login is fictional demo data.
+**Try it:** open `/admin` — the demo login credentials are shown right on the sign-in page.
 
 ## ⚠️ Disclaimer
 

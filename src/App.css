@@ -517,6 +517,16 @@
   gap: 1rem;
 }
 
+.demo-hint {
+  background: var(--paper-alt);
+  border: 1px dashed var(--line-strong);
+  border-radius: 4px;
+  padding: 0.7rem 0.9rem;
+  font-size: 0.82rem;
+  color: var(--ink-soft);
+  line-height: 1.6;
+}
+
 .admin-gate label {
   display: flex;
   flex-direction: column;
