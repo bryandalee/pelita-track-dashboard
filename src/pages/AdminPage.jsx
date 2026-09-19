@@ -1,47 +1,63 @@
 import { useEffect, useState } from 'react'
+import { supabase } from '../lib/supabaseClient'
 import AdminForm from '../components/AdminForm'
 import AdminList from '../components/AdminList'
 import { fetchShipments } from '../api/shipments'
 
-const SESSION_KEY = 'pelita-track-admin-ok'
-
-function PasswordGate({ onUnlock }) {
-  const [value, setValue] = useState('')
+function LoginForm() {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [submitting, setSubmitting] = useState(false)
 
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault()
-    if (value === import.meta.env.VITE_ADMIN_PASSWORD) {
-      sessionStorage.setItem(SESSION_KEY, '1')
-      onUnlock()
-    } else {
-      setError('Wrong password.')
-    }
+    setSubmitting(true)
+    setError('')
+    const { error: signInError } = await supabase.auth.signInWithPassword({ email, password })
+    if (signInError) setError(signInError.message)
+    setSubmitting(false)
   }
 
   return (
     <main className="main">
       <form className="admin-gate" onSubmit={handleSubmit}>
-        <h2>Admin access</h2>
+        <h2>Admin login</h2>
         <p className="estimator-sub">
-          This is a simple client-side password check for demo purposes only — it is not
-          real authentication. Do not use this page with real customer data.
+          Sign in with the admin account created in Supabase. Access is enforced by
+          Supabase Auth + Row Level Security, not by the app itself.
         </p>
         <label>
+          <span>Email</span>
+          <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} autoFocus required />
+        </label>
+        <label>
           <span>Password</span>
-          <input type="password" value={value} onChange={(e) => setValue(e.target.value)} autoFocus />
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
         </label>
         {error && <p className="estimator-error">{error}</p>}
-        <button type="submit">Enter</button>
+        <button type="submit" disabled={submitting}>{submitting ? 'Signing in…' : 'Sign in'}</button>
       </form>
     </main>
   )
 }
 
 export default function AdminPage() {
-  const [unlocked, setUnlocked] = useState(() => sessionStorage.getItem(SESSION_KEY) === '1')
+  const [session, setSession] = useState(null)
+  const [sessionChecked, setSessionChecked] = useState(false)
   const [shipments, setShipments] = useState([])
   const [status, setStatus] = useState('loading')
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data }) => {
+      setSession(data.session)
+      setSessionChecked(true)
+    })
+    const { data: listener } = supabase.auth.onAuthStateChange((_event, newSession) => {
+      setSession(newSession)
+    })
+    return () => listener.subscription.unsubscribe()
+  }, [])
 
   function reload() {
     setStatus('loading')
@@ -57,15 +73,26 @@ export default function AdminPage() {
   }
 
   useEffect(() => {
-    if (unlocked) reload()
-  }, [unlocked])
+    if (session) reload()
+  }, [session])
 
-  if (!unlocked) {
-    return <PasswordGate onUnlock={() => setUnlocked(true)} />
+  if (!sessionChecked) {
+    return <main className="main"><p className="empty-note">Checking session…</p></main>
+  }
+
+  if (!session) {
+    return <LoginForm />
   }
 
   return (
     <main className="main">
+      <div className="admin-topbar">
+        <span className="admin-signed-in">Signed in as {session.user.email}</span>
+        <button type="button" className="admin-advance-btn" onClick={() => supabase.auth.signOut()}>
+          Sign out
+        </button>
+      </div>
+
       <AdminForm onAdded={reload} />
 
       <section>

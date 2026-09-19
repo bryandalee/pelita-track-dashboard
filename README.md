@@ -26,23 +26,23 @@ Two tables (see `supabase_schema.sql`):
 ## ⚙️ Setup
 
 1. Create a free project at [supabase.com](https://supabase.com)
-2. In the Supabase SQL Editor, run `supabase_schema.sql` from this repo — this creates both tables, sets up Row Level Security, and inserts 6 fictional demo shipments
-3. Copy `.env.example` to `.env.local` and fill in your project's URL and anon public key (found under Project Settings → Data API), plus a password of your choice for the admin page:
+2. In the Supabase SQL Editor, run `supabase_schema.sql` from this repo, then `tighten_rls.sql` — together these create both tables, set up Row Level Security (public read, writes restricted to logged-in users only), and insert 6 fictional demo shipments
+3. Create your own admin account: Supabase Dashboard → Authentication → Users → **Add user** (use your own email + a password). This is the only account that will be able to sign in to `/admin` — there is no public sign-up.
+4. Copy `.env.example` to `.env.local` and fill in your project's URL and anon public key (found under Project Settings → Data API):
 
        VITE_SUPABASE_URL=...
        VITE_SUPABASE_ANON_KEY=...
-       VITE_ADMIN_PASSWORD=...
 
-4. Install and run:
+5. Install and run:
 
        npm install
        npm run dev
 
-## ⚠️ Security note — read before using with real data
+## 🔒 Admin authentication
 
-The `/admin` page is protected by a **client-side password check only** — the password lives in an environment variable that gets bundled into the JavaScript sent to the browser, so it can be read by anyone who inspects the page source. This is fine for a portfolio demo where the "cost" of someone bypassing it is just seeing a form, but it is **not real authentication**.
+`/admin` is protected by real **Supabase Auth** — signing in requires the email/password of an account created directly in the Supabase dashboard. Write access to the database is enforced by Row Level Security policies that check for a logged-in (`authenticated`) session, at the database level — not by anything in the React code. This means the protection holds even if someone bypasses the UI and calls the API directly.
 
-The database's write access is also intentionally open (see the RLS policies in `supabase_schema.sql`) so the demo works without a login system. **Before this project ever touches real customer data**, both of these need to be replaced with real Supabase Auth (email/password or magic link login) and RLS policies that check `auth.uid()`.
+**Try it:** `/admin` — login with `demo@pelitatrack.app` / `PelitaDemo2026`. All data behind this login is fictional demo data.
 
 ## ⚠️ Disclaimer
 
